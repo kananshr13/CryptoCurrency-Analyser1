@@ -26,26 +26,26 @@ This project implements a **production-style NLP pipeline** for cryptocurrency m
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Data Ingestion Layer                       │
-│   CoinGecko API (prices)  +  CryptoPanic / Mock (news)       │
+│                    Data Ingestion Layer                     │
+│   CoinGecko API (prices)  +  CryptoPanic / Mock (news)      │
 └────────────────────────┬────────────────────────────────────┘
                          │
 ┌────────────────────────▼────────────────────────────────────┐
-│                   NLP Processing Layer                        │
-│                                                               │
-│   Text Preprocessing  →  VADER (extended lexicon)            │
-│                       →  FinBERT (ProsusAI/finbert)          │
+│                   NLP Processing Layer                      │
+│                                                             │
+│   Text Preprocessing  →  VADER (extended lexicon)           │
+│                       →  FinBERT (ProsusAI/finbert)         │
 │                       →  Ensemble (0.4 × VADER + 0.6 × FB)  │
 └────────────────────────┬────────────────────────────────────┘
                          │
 ┌────────────────────────▼────────────────────────────────────┐
-│               Aggregation & Evaluation Layer                  │
-│   Confidence-weighted averaging  +  sklearn metrics          │
+│               Aggregation & Evaluation Layer                │
+│   Confidence-weighted averaging  +  sklearn metrics         │
 └────────────────────────┬────────────────────────────────────┘
                          │
 ┌────────────────────────▼────────────────────────────────────┐
-│                   Output Layer                                │
-│   CLI report  +  Streamlit dashboard  +  JSON export         │
+│                   Output Layer                              │
+│   CLI report  +  Streamlit dashboard  +  JSON export        │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -175,7 +175,3 @@ VADER's default lexicon is extended with domain-specific financial terms:
 - [ ] Fine-tune FinBERT on crypto-specific labeled dataset
 
 ---
-
-## 📄 License
-
-MIT License
