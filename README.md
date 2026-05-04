@@ -2,7 +2,7 @@
 
 > An end-to-end Python NLP pipeline that performs sentiment analysis on cryptocurrency news headlines, aggregates signals per coin, and correlates sentiment with live price data.
 
-**Built by:** Kanan Sharma & Radhika Khatri  
+**Built by:** Kanan Sharma 
 **Stack:** Python · VADER · HuggingFace FinBERT · scikit-learn · pandas · Streamlit · CoinGecko API
 
 ---
