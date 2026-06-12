@@ -225,4 +225,3 @@ if user_text.strip():
     c4.metric("Signal",         result.signal)
     if result.keywords:
         st.info(f"🔑 Keywords detected: {', '.join(result.keywords)}")
-    #st.caption(result.explanation)

@@ -1,13 +1,13 @@
-# 🪙 CryptoCurrency NLP Sentiment Analyser
+# CryptoCurrency NLP Sentiment Analyser
 
 > An end-to-end Python NLP pipeline that performs sentiment analysis on cryptocurrency news headlines, aggregates signals per coin, and correlates sentiment with live price data.
 
-**Built by:** Kanan Sharma & Radhika Khatri  
+**Built by:** Kanan Sharma 
 **Stack:** Python · VADER · HuggingFace FinBERT · scikit-learn · pandas · Streamlit · CoinGecko API
 
 ---
 
-## 🧠 What This Project Does
+##  What This Project Does
 
 This project implements a **production-style NLP pipeline** for cryptocurrency market intelligence:
 
@@ -22,41 +22,41 @@ This project implements a **production-style NLP pipeline** for cryptocurrency m
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Data Ingestion Layer                       │
-│   CoinGecko API (prices)  +  CryptoPanic / Mock (news)       │
+│                    Data Ingestion Layer                     │
+│   CoinGecko API (prices)  +  CryptoPanic / Mock (news)      │
 └────────────────────────┬────────────────────────────────────┘
                          │
 ┌────────────────────────▼────────────────────────────────────┐
-│                   NLP Processing Layer                        │
-│                                                               │
-│   Text Preprocessing  →  VADER (extended lexicon)            │
-│                       →  FinBERT (ProsusAI/finbert)          │
+│                   NLP Processing Layer                      │
+│                                                             │
+│   Text Preprocessing  →  VADER (extended lexicon)           │
+│                       →  FinBERT (ProsusAI/finbert)         │
 │                       →  Ensemble (0.4 × VADER + 0.6 × FB)  │
 └────────────────────────┬────────────────────────────────────┘
                          │
 ┌────────────────────────▼────────────────────────────────────┐
-│               Aggregation & Evaluation Layer                  │
-│   Confidence-weighted averaging  +  sklearn metrics          │
+│               Aggregation & Evaluation Layer                │
+│   Confidence-weighted averaging  +  sklearn metrics         │
 └────────────────────────┬────────────────────────────────────┘
                          │
 ┌────────────────────────▼────────────────────────────────────┐
-│                   Output Layer                                │
-│   CLI report  +  Streamlit dashboard  +  JSON export         │
+│                   Output Layer                              │
+│   CLI report  +  Streamlit dashboard  +  JSON export        │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 crypto_analyser/
-├── main.py                    # 🚀 Full pipeline — run this
-├── dashboard.py               # 🖥️  Streamlit interactive UI
+├── main.py                    # Full pipeline — run this
+├── dashboard.py               # Streamlit interactive UI
 ├── requirements.txt
 │
 ├── data/
@@ -77,14 +77,14 @@ crypto_analyser/
 
 ---
 
-## 🚀 Quickstart
+## Quickstart
 
 ### 1. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Run the full pipeline (CLI)
+### Run the full pipeline (CLI)
 ```bash
 # Full pipeline with VADER only (fast, no download needed)
 python main.py --no-finbert
@@ -99,19 +99,19 @@ python main.py --coin bitcoin --no-finbert
 python main.py --eval --no-finbert
 ```
 
-### 3. Launch the interactive dashboard
+###  Launch the interactive dashboard
 ```bash
 streamlit run dashboard.py
 ```
 
-### 4. Explore the Jupyter notebook
+###  Explore the Jupyter notebook
 ```bash
 jupyter notebook notebooks/sentiment_analysis.ipynb
 ```
 
 ---
 
-## 📊 Sample Output
+## Sample Output
 
 ```
 ================================================================
@@ -144,7 +144,7 @@ jupyter notebook notebooks/sentiment_analysis.ipynb
 
 ---
 
-## 🔬 NLP Approach
+##  NLP Approach
 
 ### Why two models?
 
@@ -166,7 +166,7 @@ VADER's default lexicon is extended with domain-specific financial terms:
 
 ---
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 - [ ] Twitter/X API integration for social sentiment signals
 - [ ] Price prediction model using sentiment + technical indicators (LSTM)
@@ -175,7 +175,3 @@ VADER's default lexicon is extended with domain-specific financial terms:
 - [ ] Fine-tune FinBERT on crypto-specific labeled dataset
 
 ---
-
-## 📄 License
-
-MIT License
