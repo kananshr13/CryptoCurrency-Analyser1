@@ -1,0 +1,307 @@
+{
+  "generated_at": "2026-05-04T08:08:28.984158",
+  "model": "CryptoSentimentAnalyser (VADER + FinBERT ensemble)",
+  "coins_analysed": 8,
+  "summaries": [
+    {
+      "coin_id": "bitcoin",
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "price_usd": 79608.0,
+      "change_24h_pct": 1.4563031822402182,
+      "sentiment": {
+        "score": 0.1777,
+        "label": "Positive",
+        "signal": "Buy",
+        "confidence": 0.8542,
+        "n_articles": 10,
+        "keywords": [
+          "liquidation",
+          "crackdown",
+          "adoption",
+          "ban",
+          "breach",
+          "partnership",
+          "vulnerability",
+          "etf",
+          "bullish",
+          "upgrade"
+        ],
+        "positive_pct": 60.0,
+        "negative_pct": 40.0,
+        "neutral_pct": 0.0
+      },
+      "n_articles": 10,
+      "top_keywords": [
+        "liquidation",
+        "crackdown",
+        "adoption",
+        "ban",
+        "breach"
+      ]
+    },
+    {
+      "coin_id": "ethereum",
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "price_usd": 2358.26,
+      "change_24h_pct": 2.018449192140218,
+      "sentiment": {
+        "score": 0.1777,
+        "label": "Positive",
+        "signal": "Buy",
+        "confidence": 0.8542,
+        "n_articles": 10,
+        "keywords": [
+          "liquidation",
+          "crackdown",
+          "adoption",
+          "ban",
+          "breach",
+          "partnership",
+          "vulnerability",
+          "etf",
+          "bullish",
+          "upgrade"
+        ],
+        "positive_pct": 60.0,
+        "negative_pct": 40.0,
+        "neutral_pct": 0.0
+      },
+      "n_articles": 10,
+      "top_keywords": [
+        "liquidation",
+        "crackdown",
+        "adoption",
+        "ban",
+        "breach"
+      ]
+    },
+    {
+      "coin_id": "solana",
+      "symbol": "SOL",
+      "name": "Solana",
+      "price_usd": 84.68,
+      "change_24h_pct": 0.8654482237501235,
+      "sentiment": {
+        "score": 0.1777,
+        "label": "Positive",
+        "signal": "Buy",
+        "confidence": 0.8542,
+        "n_articles": 10,
+        "keywords": [
+          "liquidation",
+          "crackdown",
+          "adoption",
+          "ban",
+          "breach",
+          "partnership",
+          "vulnerability",
+          "etf",
+          "bullish",
+          "upgrade"
+        ],
+        "positive_pct": 60.0,
+        "negative_pct": 40.0,
+        "neutral_pct": 0.0
+      },
+      "n_articles": 10,
+      "top_keywords": [
+        "liquidation",
+        "crackdown",
+        "adoption",
+        "ban",
+        "breach"
+      ]
+    },
+    {
+      "coin_id": "binancecoin",
+      "symbol": "BNB",
+      "name": "BNB",
+      "price_usd": 628.3,
+      "change_24h_pct": 1.760254024693459,
+      "sentiment": {
+        "score": 0.1777,
+        "label": "Positive",
+        "signal": "Buy",
+        "confidence": 0.8542,
+        "n_articles": 10,
+        "keywords": [
+          "liquidation",
+          "crackdown",
+          "adoption",
+          "ban",
+          "breach",
+          "partnership",
+          "vulnerability",
+          "etf",
+          "bullish",
+          "upgrade"
+        ],
+        "positive_pct": 60.0,
+        "negative_pct": 40.0,
+        "neutral_pct": 0.0
+      },
+      "n_articles": 10,
+      "top_keywords": [
+        "liquidation",
+        "crackdown",
+        "adoption",
+        "ban",
+        "breach"
+      ]
+    },
+    {
+      "coin_id": "ripple",
+      "symbol": "XRP",
+      "name": "XRP",
+      "price_usd": 1.41,
+      "change_24h_pct": 1.5041709613444347,
+      "sentiment": {
+        "score": 0.1777,
+        "label": "Positive",
+        "signal": "Buy",
+        "confidence": 0.8542,
+        "n_articles": 10,
+        "keywords": [
+          "liquidation",
+          "crackdown",
+          "adoption",
+          "ban",
+          "breach",
+          "partnership",
+          "vulnerability",
+          "etf",
+          "bullish",
+          "upgrade"
+        ],
+        "positive_pct": 60.0,
+        "negative_pct": 40.0,
+        "neutral_pct": 0.0
+      },
+      "n_articles": 10,
+      "top_keywords": [
+        "liquidation",
+        "crackdown",
+        "adoption",
+        "ban",
+        "breach"
+      ]
+    },
+    {
+      "coin_id": "cardano",
+      "symbol": "ADA",
+      "name": "Cardano",
+      "price_usd": 0.251364,
+      "change_24h_pct": 0.9241123602802284,
+      "sentiment": {
+        "score": 0.1777,
+        "label": "Positive",
+        "signal": "Buy",
+        "confidence": 0.8542,
+        "n_articles": 10,
+        "keywords": [
+          "liquidation",
+          "crackdown",
+          "adoption",
+          "ban",
+          "breach",
+          "partnership",
+          "vulnerability",
+          "etf",
+          "bullish",
+          "upgrade"
+        ],
+        "positive_pct": 60.0,
+        "negative_pct": 40.0,
+        "neutral_pct": 0.0
+      },
+      "n_articles": 10,
+      "top_keywords": [
+        "liquidation",
+        "crackdown",
+        "adoption",
+        "ban",
+        "breach"
+      ]
+    },
+    {
+      "coin_id": "dogecoin",
+      "symbol": "DOGE",
+      "name": "Dogecoin",
+      "price_usd": 0.112047,
+      "change_24h_pct": 3.7098711474637702,
+      "sentiment": {
+        "score": 0.1777,
+        "label": "Positive",
+        "signal": "Buy",
+        "confidence": 0.8542,
+        "n_articles": 10,
+        "keywords": [
+          "liquidation",
+          "crackdown",
+          "adoption",
+          "ban",
+          "breach",
+          "partnership",
+          "vulnerability",
+          "etf",
+          "bullish",
+          "upgrade"
+        ],
+        "positive_pct": 60.0,
+        "negative_pct": 40.0,
+        "neutral_pct": 0.0
+      },
+      "n_articles": 10,
+      "top_keywords": [
+        "liquidation",
+        "crackdown",
+        "adoption",
+        "ban",
+        "breach"
+      ]
+    },
+    {
+      "coin_id": "polkadot",
+      "symbol": "DOT",
+      "name": "Polkadot",
+      "price_usd": 1.24,
+      "change_24h_pct": 1.7687410534957797,
+      "sentiment": {
+        "score": 0.1777,
+        "label": "Positive",
+        "signal": "Buy",
+        "confidence": 0.8542,
+        "n_articles": 10,
+        "keywords": [
+          "liquidation",
+          "crackdown",
+          "adoption",
+          "ban",
+          "breach",
+          "partnership",
+          "vulnerability",
+          "etf",
+          "bullish",
+          "upgrade"
+        ],
+        "positive_pct": 60.0,
+        "negative_pct": 40.0,
+        "neutral_pct": 0.0
+      },
+      "n_articles": 10,
+      "top_keywords": [
+        "liquidation",
+        "crackdown",
+        "adoption",
+        "ban",
+        "breach"
+      ]
+    }
+  ],
+  "evaluation": {
+    "accuracy": 0.8636363636363636,
+    "f1_macro": 0.8549019607843137
+  }
+}
