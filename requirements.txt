@@ -4,7 +4,7 @@
 # ── Core NLP ──────────────────────────────────────────────────────────────────
 vaderSentiment==3.3.2          # Rule-based sentiment analysis (fast, domain-adaptable)
 transformers==4.40.0           # HuggingFace — FinBERT and other transformer models
-torch==2.3.0                   # PyTorch backend for FinBERT inference
+torch                   # PyTorch backend for FinBERT inference
 
 # ── Data & ML ─────────────────────────────────────────────────────────────────
 numpy==1.26.4
