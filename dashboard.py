@@ -205,7 +205,7 @@ if user_text.strip():
 st.markdown("---")
 
 st.caption(
-    "Built by Kanan Sharma | Computer Science Engineering Student"
+    "Built by Kanan Sharma "
 )
 
 st.caption(
