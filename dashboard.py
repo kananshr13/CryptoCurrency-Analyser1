@@ -24,7 +24,7 @@ from models.sentiment_model import CryptoSentimentAnalyser
 st.set_page_config(
     page_title="Crypto Sentiment Analyser",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 st.markdown("""
@@ -45,8 +45,8 @@ SIGNAL_COLORS = {
 
 # ── Sidebar ────────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.title("Settings")
-    use_finbert = st.toggle("Use FinBERT (better accuracy)", value=False,
+    st.title("Configurations")
+    use_finbert = st.toggle("Advanced Model", value=False,
                             help="Downloads ~500MB model on first run. VADER is instant.")
     selected_coins = st.multiselect(
         "Track coins",
@@ -78,7 +78,7 @@ def get_coin_data(coin, analyser, news_client):
 
 # ── Main UI ────────────────────────────────────────────────────────────────────
 st.title("Crypto Market Sentiment Intelligence")
-st.markdown("""Real-time cryptocurrency sentiment monitoring made using VADER and FINBERT natural language processing models.""")
+st.markdown("""Real-time sentiment monitoring and market intelligence for major cryptocurrencies using NLP models and live market data.""")
 st.caption(f"Last updated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}  |  "
            f"Model: {'VADER + FinBERT Ensemble' if use_finbert else 'VADER (fast mode)'}")
 
@@ -161,28 +161,9 @@ for tab, cd in zip(tabs, coin_data):
 
         with col1:
             # Gauge chart
-            fig_gauge = go.Figure(go.Indicator(
-                mode="gauge+number",
-                value=s["score"],
-                number={"suffix": "", "font": {"color": "#f1f5f9"}},
-                gauge={
-                    "axis": {"range": [-1, 1], "tickcolor": "#94a3b8"},
-                    "bar":  {"color": SIGNAL_COLORS.get(s["signal"], "#94a3b8")},
-                    "bgcolor": "#1e293b",
-                    "steps": [
-                        {"range": [-1, -0.35], "color": "rgba(255,51,102,0.13)"},
-                        {"range": [-0.35, -0.1], "color": "rgba(248,113,113,0.13)"},
-                        {"range": [-0.1, 0.1], "color": "rgba(250,204,21,0.13)"},
-                        {"range": [0.1, 0.35], "color": "rgba(34,197,94,0.13)"},
-                        {"range": [0.35, 1], "color": "rgba(0,255,136,0.13)"},
-                        ],
-                    "threshold": {"line": {"color": "#f1f5f9", "width": 2}, "value": s["score"]},
-                },
-                title={"text": f"{cd['coin']['name']} Sentiment", "font": {"color": "#f1f5f9"}},
-            ))
-            fig_gauge.update_layout(paper_bgcolor="#0f172a", height=250, margin=dict(t=40, b=10))
-            st.plotly_chart(fig_gauge, use_container_width=True)
-
+            
+            st.metric("Sentiment Score",f"{s['score']:+.3f}")
+            st.progress((s["score"] + 1) / 2)
             st.metric("Signal",     s["signal"])
             st.metric("Confidence", f"{s['confidence']:.0%}")
             st.metric("Positive",   f"{s['positive_pct']:.0f}%")
@@ -224,5 +205,9 @@ if user_text.strip():
 st.markdown("---")
 
 st.caption(
-    "Built by Kanan Sharma • Python • NLP • Streamlit • VADER • FinBERT • CoinGecko API"
+    "Built by Kanan Sharma | Computer Science Engineering Student"
+)
+
+st.caption(
+    "Python • NLP • Streamlit • FinBERT • VADER • CoinGecko API"
 )
