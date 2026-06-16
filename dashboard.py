@@ -23,7 +23,6 @@ from models.sentiment_model import CryptoSentimentAnalyser
 # ── Page config ────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Crypto Sentiment Analyser",
-    page_icon="🪙",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -46,7 +45,7 @@ SIGNAL_COLORS = {
 
 # ── Sidebar ────────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.title("⚙️ Settings")
+    st.title("Settings")
     use_finbert = st.toggle("Use FinBERT (better accuracy)", value=False,
                             help="Downloads ~500MB model on first run. VADER is instant.")
     selected_coins = st.multiselect(
@@ -56,11 +55,7 @@ with st.sidebar:
     )
     cryptopanic_key = st.text_input("CryptoPanic API Key (optional)", type="password",
                                     help="Get free key at cryptopanic.com for live news")
-    refresh = st.button("🔄 Refresh Data", use_container_width=True)
-    st.markdown("---")
-    st.markdown("**About this project**")
-    st.caption("NLP pipeline using VADER + FinBERT ensemble for crypto sentiment analysis. "
-               "Built for the Management Trainee (AI-ML) role — EIMA Analytics.")
+    refresh = st.button("Refresh Data", use_container_width=True)
 
 # ── Load data ──────────────────────────────────────────────────────────────────
 @st.cache_resource
@@ -82,7 +77,8 @@ def get_coin_data(coin, analyser, news_client):
     return {"coin": coin, "news": news, "results": results, "sentiment": sentiment}
 
 # ── Main UI ────────────────────────────────────────────────────────────────────
-st.title("🪙 CryptoCurrency NLP Sentiment Analyser")
+st.title("Crypto Market Sentiment Intelligence")
+st.markdown("""Real-time cryptocurrency sentiment monitoring made using VADER and FINBERT natural language processing models.""")
 st.caption(f"Last updated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}  |  "
            f"Model: {'VADER + FinBERT Ensemble' if use_finbert else 'VADER (fast mode)'}")
 
@@ -99,7 +95,7 @@ with st.spinner("Running NLP sentiment pipeline..."):
     coin_data = [get_coin_data(c, analyser, news_client) for c in target]
 
 # ── Summary metrics row ────────────────────────────────────────────────────────
-st.subheader("📊 Sentiment Dashboard")
+st.subheader("Market Overview")
 cols = st.columns(len(coin_data))
 for col, cd in zip(cols, coin_data):
     s = cd["sentiment"]
@@ -119,11 +115,11 @@ for col, cd in zip(cols, coin_data):
             f'{s["signal"]}  {s["score"]:+.3f}</span>',
             unsafe_allow_html=True,
         )
-        st.caption(f"Conf: {s['confidence']:.0%}  |  {s['n_articles']} articles")
+        st.caption(f"Confidence: {s['confidence']:.0%}  |  {s['n_articles']} articles")
 
 # ── Horizontal sentiment bar chart ────────────────────────────────────────────
 st.markdown("---")
-st.subheader("🔍 Sentiment Score Comparison")
+st.subheader("Sentiment Comparison")
 
 chart_df = pd.DataFrame([
     {
@@ -154,7 +150,7 @@ st.plotly_chart(fig, use_container_width=True)
 
 # ── Per-coin deep dive ─────────────────────────────────────────────────────────
 st.markdown("---")
-st.subheader("🔬 Per-Coin Analysis")
+st.subheader("Detailed Analysis")
 tab_names = [cd["coin"]["symbol"] for cd in coin_data]
 tabs = st.tabs(tab_names)
 
@@ -195,7 +191,7 @@ for tab, cd in zip(tabs, coin_data):
                 st.caption("Top keywords: " + ", ".join(s["keywords"][:6]))
 
         with col2:
-            st.markdown("**📰 News Headlines & Sentiment**")
+            st.markdown("**News Headlines & Sentiment**")
             for news_item, result in zip(cd["news"][:8], cd["results"][:8]):
                 color = {"Positive": "#22c55e", "Negative": "#ef4444", "Neutral": "#94a3b8"}[result.label]
                 st.markdown(
@@ -210,7 +206,7 @@ for tab, cd in zip(tabs, coin_data):
 
 # ── Text input for live analysis ───────────────────────────────────────────────
 st.markdown("---")
-st.subheader("✍️ Live NLP Analyser — Try it yourself")
+st.subheader("Live Sentiment Analysis ")
 user_text = st.text_area(
     "Paste any crypto headline or text:",
     placeholder="e.g. Bitcoin ETF approved — massive institutional adoption expected...",
@@ -224,4 +220,9 @@ if user_text.strip():
     c3.metric("VADER Score",    f"{result.vader_compound:+.3f}")
     c4.metric("Signal",         result.signal)
     if result.keywords:
-        st.info(f"🔑 Keywords detected: {', '.join(result.keywords)}")
+        st.info(f" Keywords detected: {', '.join(result.keywords)}")
+st.markdown("---")
+
+st.caption(
+    "Built by Kanan Sharma • Python • NLP • Streamlit • VADER • FinBERT • CoinGecko API"
+)
