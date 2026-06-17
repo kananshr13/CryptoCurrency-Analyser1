@@ -6,6 +6,24 @@ A real-time cryptocurrency sentiment analysis dashboard that combines live marke
 
 https://crypto-sentiment-analyser.streamlit.app
 
+## Dashboard Preview
+
+### Market Overview
+
+![Market Overview](screenshots/main%20page.png)
+
+### Detailed Analysis
+
+![Detailed Analysis](screenshots/detailed%20analyis.png)
+
+### Configurations (Advanced - FinBERT Model)
+
+![Configurations](screenshots/configurations.png)
+
+### Live Sentiment Analysis
+
+![Live Analysis](screenshots/live%20analysis.png)
+
 ## Features
 
 ### Real-Time Market Data
