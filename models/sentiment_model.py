@@ -147,14 +147,15 @@ class CryptoSentimentAnalyser:
 
     # ── Ensemble & labelling ───────────────────────────────────────────────────
 
-    def _ensemble(self, vader: float, finbert: Optional[float]) -> tuple[float, float]:
+    def _ensemble(self, vader: float, finbert: Optional[float]):
         """Weighted ensemble → (score, confidence)."""
         if finbert is not None:
             score = 0.4 * vader + 0.6 * finbert
-            confidence = min(1.0, (abs(vader) + abs(finbert)) / 2 + 0.1)
+            agreement = 1 - abs(vader - finbert)/2
+            confidence = max(0.30, min(0.95, agreement))
         else:
             score = vader
-            confidence = min(1.0, abs(vader) + 0.15)
+            confidence = max(0.30, min(0.85, abs(vader)))
         return round(score, 4), round(confidence, 4)
 
     @staticmethod
@@ -165,11 +166,12 @@ class CryptoSentimentAnalyser:
 
     @staticmethod
     def _score_to_signal(score: float) -> str:
-        if score > 0.4:  return "Strong Buy"
-        if score > 0.1:  return "Buy"
-        if score > -0.1: return "Hold"
-        if score > -0.4: return "Sell"
-        return "Strong Sell"
+        if score >= 0.2:  
+            return "Bullish"
+        elif score <= -0.2:
+            return "Bearish"
+        else:
+            return "Neutral"
 
     # ── Public API ─────────────────────────────────────────────────────────────
 

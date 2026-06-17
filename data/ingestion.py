@@ -3,14 +3,12 @@ Data Ingestion Module
 =====================
 Fetches:
   - Live cryptocurrency prices & market data from CoinGecko (free tier, no API key)
-  - News headlines from CryptoPanic (free tier) or falls back to curated mock data
-
 In a production pipeline this would also pull from:
   - Twitter/X API (social sentiment)
   - Reddit PRAW (community sentiment)
   - NewsAPI (broad financial news)
 """
-
+import feedparser
 import time
 import random
 import logging
@@ -40,7 +38,7 @@ TRACKED_COINS = [
 class CoinGeckoClient:
     """Thin wrapper around CoinGecko public API with rate-limit handling."""
 
-    def __init__(self, rate_limit_delay: float = 1.2):
+    def __init__(self, rate_limit_delay: float = 3):
         self.session = requests.Session()
         self.session.headers.update({"Accept": "application/json"})
         self.delay = rate_limit_delay  # CoinGecko free tier: ~10 req/min
@@ -134,38 +132,44 @@ class NewsIngestion:
         self.api_key = cryptopanic_api_key
         self.session = requests.Session()
 
-    def fetch_live(self, coin_symbol: str = None, limit: int = 20) -> list[dict]:
-        """Fetch from CryptoPanic (requires free API key from cryptopanic.com)."""
-        if not self.api_key:
-            logger.info("No CryptoPanic API key — using mock data")
-            return []
-        params = {
-            "auth_token": self.api_key,
-            "kind": "news",
-            "public": "true",
-        }
-        if coin_symbol:
-            params["currencies"] = coin_symbol.upper()
-
+    def fetch_live(self, coin_name: str, limit: int = 30):
+        feeds = [
+            "https://www.coindesk.com/arc/outboundfeeds/rss/",
+            "https://cointelegraph.com/rss",
+            "https://decrypt.co/feed",
+            "https://cryptoslate.com/feed/"
+        ]
+        news = []
         try:
-            resp = self.session.get(self.CRYPTOPANIC_BASE, params=params, timeout=10)
-            resp.raise_for_status()
-            results = resp.json().get("results", [])[:limit]
-            return [
-                {
-                    "title": r.get("title", ""),
-                    "body": r.get("body", ""),
-                    "source": r.get("source", {}).get("title", "Unknown"),
-                    "published_at": r.get("published_at", ""),
-                    "url": r.get("url", ""),
-                    "coin": coin_symbol,
-                }
-                for r in results
-            ]
+            for feed_url in feeds:
+                feed = feedparser.parse(feed_url)
+                for entry in feed.entries:
+                    title = entry.get("title", "")
+                    summary = entry.get("summary", "")
+                    text = f"{title} {summary}".lower()
+                    if coin_name.lower() in text:
+                        news.append({
+                            "title": title,
+                            "body": summary,
+                            "source": feed.feed.get(
+                                "title",
+                                "unknown"
+                            ),
+                            "published_at": entry.get(
+                                "published",
+                                ""
+                            ),
+                            "url": entry.get(
+                                "link",
+                                ""
+                            ),
+                            "coin": coin_name,
+                        })
+            return news[:limit]
+        
         except Exception as e:
-            logger.warning("CryptoPanic fetch failed: %s", e)
-            return []
-
+            logger.warning("RSS fetch failed : %s", e)
+            return[]
     def get_mock_news(self, coin_name: str) -> list[dict]:
         """
         Curated realistic news headlines covering bullish, bearish, and neutral signals.
@@ -238,7 +242,8 @@ class NewsIngestion:
             for i, t in enumerate(templates)
         ]
 
-    def get_news(self, coin_name: str, coin_symbol: str, limit: int = 10) -> list[dict]:
+    def get_news(self, coin_name: str, coin_symbol: str, limit: int = 30) -> list[dict]:
         """Get news — live if API key available, mock otherwise."""
-        live = self.fetch_live(coin_symbol, limit)
+        live = self.fetch_live(coin_name, limit)
+        print(f"Live articles fetched: {len(live)}")
         return live if live else self.get_mock_news(coin_name)
