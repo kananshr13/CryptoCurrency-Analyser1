@@ -4,7 +4,6 @@
 
 **Built by:** Kanan Sharma 
 **Stack:** Python · VADER · HuggingFace FinBERT · scikit-learn · pandas · Streamlit · CoinGecko API
----
 **ACCESS IT** https://crypto-sentiment-analyser.streamlit.app
 ---
 
