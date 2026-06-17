@@ -6,7 +6,6 @@ Interactive web UI that runs the full NLP pipeline in real-time.
 Run:
     streamlit run dashboard.py
 """
-
 import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
@@ -39,8 +38,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 SIGNAL_COLORS = {
-    "Strong Buy": "#00ff88", "Buy": "#22c55e",
-    "Hold": "#facc15", "Sell": "#f87171", "Strong Sell": "#ff3366",
+     "Bullish": "#22c55e","Neutral": "#facc15", "Bearish": "#ff3366"
 }
 
 # ── Sidebar ────────────────────────────────────────────────────────────────────
@@ -53,8 +51,6 @@ with st.sidebar:
         options=[c["name"] for c in TRACKED_COINS],
         default=["Bitcoin", "Ethereum", "Solana", "BNB", "XRP"],
     )
-    cryptopanic_key = st.text_input("CryptoPanic API Key (optional)", type="password",
-                                    help="Get free key at cryptopanic.com for live news")
     refresh = st.button("Refresh Data", use_container_width=True)
 
 # ── Load data ──────────────────────────────────────────────────────────────────
@@ -74,13 +70,22 @@ def get_coin_data(coin, analyser, news_client):
     texts = [f"{n['title']} {n['body']}" for n in news]
     results = analyser.analyse_batch(texts)
     sentiment = analyser.aggregate(results)
-    return {"coin": coin, "news": news, "results": results, "sentiment": sentiment}
+    source_count = len(set(
+        n.get("source", "unknown")
+        for n in news
+    ))     
+    return {"coin": coin, "news": news, "results": results, "sentiment": sentiment, "sources": source_count}
 
 # ── Main UI ────────────────────────────────────────────────────────────────────
 st.title("Crypto Market Sentiment Intelligence")
 st.markdown("""Real-time sentiment monitoring and market intelligence for major cryptocurrencies using NLP models and live market data.""")
-st.caption(f"Last updated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}  |  "
-           f"Model: {'VADER + FinBERT Ensemble' if use_finbert else 'VADER (fast mode)'}")
+from datetime import datetime
+from zoneinfo import ZoneInfo
+ist_time = datetime.now(ZoneInfo("Asia/Kolkata"))
+st.caption(
+    f"Updated: {ist_time.strftime('%d %b %Y %I:%M %p IST ')} | "
+    f"Model: {'VADER + FinBERT' if use_finbert else 'VADER'}"
+)
 
 target = [c for c in TRACKED_COINS if c["name"] in selected_coins]
 if not target:
@@ -88,7 +93,7 @@ if not target:
     st.stop()
 
 analyser    = load_analyser(use_finbert)
-news_client = NewsIngestion(cryptopanic_api_key=cryptopanic_key or None)
+news_client = NewsIngestion()
 prices_df   = load_prices([c["id"] for c in target])
 
 with st.spinner("Running NLP sentiment pipeline..."):
@@ -106,7 +111,7 @@ for col, cd in zip(cols, coin_data):
     color     = SIGNAL_COLORS.get(s["signal"], "#94a3b8")
     with col:
         st.metric(
-            label=f"{coin['symbol']}  {coin['name']}",
+            label=coin["symbol"],
             value=price,
             delta=chg,
         )
@@ -115,7 +120,12 @@ for col, cd in zip(cols, coin_data):
             f'{s["signal"]}  {s["score"]:+.3f}</span>',
             unsafe_allow_html=True,
         )
-        st.caption(f"Confidence: {s['confidence']:.0%}  |  {s['n_articles']} articles")
+        n_articles = len(cd["news"])
+        st.caption(
+            f"confidence: {s['confidence']:.0%} | "
+            f"{s['n_articles']} articles | "
+            f"{cd['sources']} sources"
+        )
 
 # ── Horizontal sentiment bar chart ────────────────────────────────────────────
 st.markdown("---")
@@ -126,7 +136,11 @@ chart_df = pd.DataFrame([
         "Coin": cd["coin"]["symbol"],
         "Score": cd["sentiment"]["score"],
         "Signal": cd["sentiment"]["signal"],
-        "Color": SIGNAL_COLORS.get(cd["sentiment"]["signal"], "#94a3b8"),
+        "Color": ( 
+            "#22c55e" if cd["sentiment"]["score"]> 0.2
+            else "#ef4444" if cd["sentiment"]["score"]< -0.2
+            else "#facc15"
+        ),
     }
     for cd in coin_data
 ]).sort_values("Score", ascending=True)
@@ -150,6 +164,21 @@ st.plotly_chart(fig, use_container_width=True)
 
 # ── Per-coin deep dive ─────────────────────────────────────────────────────────
 st.markdown("---")
+avg_score = sum(cd["sentiment"]["score"] for cd in coin_data)/len(coin_data)
+total_articles = sum(cd["sentiment"]["n_articles"] for cd in coin_data)
+overall = (
+    "Bullish"
+    if avg_score > 0.2
+    else "Bearish"
+    if avg_score < -0.2
+    else "Natural"
+
+)
+st.info(
+    f"""
+    Overall Market Sentiment: {overall} | Average Score: {avg_score:+.3f} | Articles Analysed: {total_articles} 
+    """
+)
 st.subheader("Detailed Analysis")
 tab_names = [cd["coin"]["symbol"] for cd in coin_data]
 tabs = st.tabs(tab_names)
@@ -172,14 +201,29 @@ for tab, cd in zip(tabs, coin_data):
                 st.caption("Top keywords: " + ", ".join(s["keywords"][:6]))
 
         with col2:
-            st.markdown("**News Headlines & Sentiment**")
+            
+            st.markdown("**7 Day Price Trend**")
+            try:
+                trend_df = CoinGeckoClient().get_market_chart(
+                    cd["coin"]["id"],
+                    days=7
+                )
+                st.line_chart(
+                    trend_df.set_index("timestamp")["price"],
+                    height=250
+                )
+            except Exception:
+                st.warning("Price trend unavailable")
+            st.markdown("**News Headlines & Sentiments**")
             for news_item, result in zip(cd["news"][:8], cd["results"][:8]):
                 color = {"Positive": "#22c55e", "Negative": "#ef4444", "Neutral": "#94a3b8"}[result.label]
                 st.markdown(
                     f'<div style="border-left:3px solid {color};padding:6px 12px;margin:6px 0;'
                     f'background:#1e293b;border-radius:0 6px 6px 0">'
                     f'<b style="color:{color}">{result.label} ({result.ensemble_score:+.2f})</b> '
-                    f'— <span style="color:#cbd5e1;font-size:13px">{news_item["title"]}</span>'
+                    f'— <a href="{news_item["url"]}" target = "_blank" '
+                    f'style="color:#cbd5e1;font-size:13px;text-decoration:none;">'
+                    f'{news_item["title"]}</a>'
                     f'<br><span style="color:#64748b;font-size:11px">'
                     f'{news_item["source"]} · {news_item["published_at"][:10]}</span></div>',
                     unsafe_allow_html=True,
