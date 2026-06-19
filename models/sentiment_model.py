@@ -1,12 +1,9 @@
-"""
-Sentiment Analysis Engine for Cryptocurrency News
-==================================================
-Uses a two-tier NLP approach:
-  1. VADER (rule-based) - fast, domain-adapted for financial text
-  2. HuggingFace FinBERT (transformer-based) - deep contextual understanding
 
-This mirrors production-grade NLP pipelines used in fintech analytics.
-"""
+# Sentiment Analysis Engine for Cryptocurrency News
+#Uses a two-tier NLP approach:
+#1. VADER (rule-based) for faster, domain-adapted for financial text
+#2. HuggingFace FinBERT (transformer-based) for deep contextual understanding
+
 
 import re
 import json
@@ -20,7 +17,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger(__name__)
 
 
-# ── Financial domain lexicon extension for VADER ──────────────────────────────
+# Financial domain lexicon extension for VADER 
 CRYPTO_LEXICON = {
     # Bullish signals
     "bullish": 3.2, "rally": 2.8, "surge": 2.9, "soar": 3.0, "breakout": 2.7,
@@ -56,17 +53,6 @@ class SentimentResult:
 
 
 class CryptoSentimentAnalyser:
-    """
-    Two-tier NLP sentiment analyser for cryptocurrency text.
-
-    Architecture
-    ------------
-    Tier 1: VADER with custom crypto lexicon (fast, interpretable)
-    Tier 2: FinBERT transformer model (deep contextual understanding)
-    Ensemble: Weighted average (0.4 * VADER + 0.6 * FinBERT)
-              Falls back to VADER-only if FinBERT is unavailable.
-    """
-
     def __init__(self, use_finbert: bool = True):
         self.use_finbert = use_finbert
         self._vader = None
@@ -84,7 +70,7 @@ class CryptoSentimentAnalyser:
         except ImportError:
             logger.warning("vaderSentiment not installed — pip install vaderSentiment")
 
-        # Load FinBERT (financial BERT fine-tuned on financial phrasebank)
+        # Load the FinBERT model (financial BERT fine-tuned on financial phrasebank)
         if self.use_finbert:
             try:
                 from transformers import pipeline
@@ -100,7 +86,7 @@ class CryptoSentimentAnalyser:
             except Exception as e:
                 logger.warning("FinBERT unavailable (%s) — using VADER only", e)
 
-    # ── Preprocessing ──────────────────────────────────────────────────────────
+    #Preprocessing
 
     def _preprocess(self, text: str) -> str:
         """Clean text for NLP processing."""
@@ -115,7 +101,7 @@ class CryptoSentimentAnalyser:
         tokens = re.findall(r"\b\w+\b", text.lower())
         return [t for t in tokens if t in CRYPTO_LEXICON]
 
-    # ── Individual model scorers ───────────────────────────────────────────────
+    # Individual model scorers 
 
     def _vader_score(self, text: str) -> float:
         """Return VADER compound score in [-1, 1]."""
@@ -145,7 +131,7 @@ class CryptoSentimentAnalyser:
             logger.debug("FinBERT inference error: %s", e)
             return None
 
-    # ── Ensemble & labelling ───────────────────────────────────────────────────
+    #Ensemble & labelling
 
     def _ensemble(self, vader: float, finbert: Optional[float]):
         """Weighted ensemble → (score, confidence)."""
@@ -173,7 +159,7 @@ class CryptoSentimentAnalyser:
         else:
             return "Neutral"
 
-    # ── Public API ─────────────────────────────────────────────────────────────
+    #Public API
 
     def analyse(self, text: str) -> SentimentResult:
         """Analyse a single piece of text and return a structured SentimentResult."""
@@ -199,10 +185,10 @@ class CryptoSentimentAnalyser:
         return [self.analyse(t) for t in texts]
 
     def aggregate(self, results: list[SentimentResult]) -> dict:
-        """
-        Aggregate multiple SentimentResults into a single coin-level summary.
-        Uses confidence-weighted averaging — higher confidence predictions count more.
-        """
+        
+        #Aggregate multiple SentimentResults into a single coin-level summary.
+        #Uses confidence-weighted averaging higher confidence predictions count more.
+        
         if not results:
             return {"score": 0.0, "label": "Neutral", "signal": "Hold", "n": 0}
 

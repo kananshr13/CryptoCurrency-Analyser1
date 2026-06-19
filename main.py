@@ -1,20 +1,5 @@
-"""
-CryptoCurrency Sentiment Analyser — Main Pipeline
-==================================================
-Orchestrates the full end-to-end flow:
-  1. Fetch live prices from CoinGecko
-  2. Ingest news headlines (live or mock)
-  3. Run NLP sentiment analysis on each headline
-  4. Aggregate per-coin sentiment scores
-  5. Evaluate model accuracy against labeled data
-  6. Generate visualisations and export report
 
-Run:
-    python main.py                     # full pipeline
-    python main.py --coin bitcoin      # single coin deep-dive
-    python main.py --eval              # evaluation only
-    python main.py --no-finbert        # VADER-only (faster)
-"""
+#CryptoCurrency Sentiment Analyser — Main Pipeline
 
 import os
 import json
@@ -48,22 +33,20 @@ def run_pipeline(
     run_eval: bool = True,
     cryptopanic_key: str = None,
 ) -> dict:
-    """
-    Full analysis pipeline.
+    
+    #Full analysis pipeline which returns a dict with per-coin summaries and evaluation report.
 
-    Returns a dict with per-coin summaries and evaluation report.
-    """
     coins = coins or TRACKED_COINS
     print("\n" + "="*60)
     print("  🪙  CryptoCurrency NLP Sentiment Analyser")
     print("  Built for: Management Trainee (AI-ML) — EIMA Analytics")
     print("="*60)
 
-    # ── Step 1: Load models ────────────────────────────────────────────────────
+    #Step 1: Load models 
     print("\n[1/5] Loading NLP models...")
     analyser = CryptoSentimentAnalyser(use_finbert=use_finbert)
 
-    # ── Step 2: Fetch live prices ──────────────────────────────────────────────
+    #Step 2: Fetch live prices 
     print("[2/5] Fetching cryptocurrency prices from CoinGecko...")
     gecko = CoinGeckoClient()
     try:
@@ -75,7 +58,7 @@ def run_pipeline(
         prices_df["price_usd"] = [62450, 3310, 178, 592, 0.58, 0.45, 0.15, 7.8][:len(coins)]
         prices_df["change_24h_pct"] = [2.4, 1.8, -1.2, 0.7, -2.1, -0.5, 3.2, -1.8][:len(coins)]
 
-    # ── Step 3: Ingest news & run sentiment ────────────────────────────────────
+    #Step 3: Ingest news & run sentiment
     print("[3/5] Ingesting news and running sentiment analysis...")
     news_client = NewsIngestion(cryptopanic_api_key=cryptopanic_key)
     coin_summaries = []
@@ -108,7 +91,7 @@ def run_pipeline(
         price_str = f"${price_usd:,.2f}" if price_usd else "N/A"
         print(f"      {coin['symbol']:<6} {price_str:<12} {pct_str:<8}  Sentiment: {score:+.3f}  → {signal}")
 
-    # ── Step 4: Visualisations ─────────────────────────────────────────────────
+    #Step 4: Visualisations
     print("[4/5] Generating visualisations...")
     plot_sentiment_dashboard(coin_summaries)
 
@@ -120,7 +103,7 @@ def run_pipeline(
     plot_label_distribution(first_coin["name"], results)
     print("      ✓ Charts saved to outputs/")
 
-    # ── Step 5: Model evaluation ───────────────────────────────────────────────
+    #Step 5: Model evaluation 
     eval_report = None
     if run_eval:
         print("[5/5] Running model evaluation on labeled test set...")
@@ -133,7 +116,7 @@ def run_pipeline(
         )
         compare_vader_vs_ensemble(analyser, labeled)
 
-    # ── Export JSON report ─────────────────────────────────────────────────────
+    # Export JSON report 
     report = {
         "generated_at": datetime.utcnow().isoformat(),
         "model": "CryptoSentimentAnalyser (VADER + FinBERT ensemble)",
@@ -150,7 +133,7 @@ def run_pipeline(
         json.dump(report, f, indent=2, default=str)
     print(f"\n✅ Report saved to {report_path}")
 
-    # ── Print final summary table ──────────────────────────────────────────────
+    # Print final summary table
     print("\n" + "="*65)
     print(f"  {'Coin':<12} {'Price':<12} {'24h':>7}  {'Score':>8}  {'Signal':<12}  Keywords")
     print("-"*65)

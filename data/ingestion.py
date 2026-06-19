@@ -1,13 +1,4 @@
-"""
-Data Ingestion Module
-=====================
-Fetches:
-  - Live cryptocurrency prices & market data from CoinGecko (free tier, no API key)
-In a production pipeline this would also pull from:
-  - Twitter/X API (social sentiment)
-  - Reddit PRAW (community sentiment)
-  - NewsAPI (broad financial news)
-"""
+
 import feedparser
 import time
 import random
@@ -36,12 +27,10 @@ TRACKED_COINS = [
 
 
 class CoinGeckoClient:
-    """Thin wrapper around CoinGecko public API with rate-limit handling."""
-
-    def __init__(self, rate_limit_delay: float = 3):
+    def __init__(self, rate_limit_delay: float = 3): 
         self.session = requests.Session()
         self.session.headers.update({"Accept": "application/json"})
-        self.delay = rate_limit_delay  # CoinGecko free tier: ~10 req/min
+        self.delay = rate_limit_delay  # CoinGecko free tier: almost 10 req/min
 
     def _get(self, endpoint: str, params: dict = None, retries: int = 3) -> dict | list:
         url = f"{COINGECKO_BASE}/{endpoint}"
@@ -64,10 +53,7 @@ class CoinGeckoClient:
         raise ConnectionError(f"Failed to fetch {url} after {retries} attempts")
 
     def get_prices(self, coin_ids: list[str] = None) -> pd.DataFrame:
-        """
-        Fetch current market data for tracked coins.
-        Returns a DataFrame with price, volume, market cap, and 24h change.
-        """
+        #fetches the current market data for the tracked available coins and then returns a dataframe which displays the price, volume, the market cap and the change
         ids = ",".join(coin_ids or [c["id"] for c in TRACKED_COINS])
         data = self._get("coins/markets", params={
             "vs_currency": "usd",
@@ -96,11 +82,7 @@ class CoinGeckoClient:
         df["fetched_at"] = datetime.utcnow().isoformat()
         return df
 
-    def get_ohlcv(self, coin_id: str, days: int = 30) -> pd.DataFrame:
-        """
-        Fetch OHLCV (Open/High/Low/Close/Volume) history.
-        Useful for training price prediction models and correlation analysis.
-        """
+    def get_ohlcv(self, coin_id: str, days: int = 30) -> pd.DataFrame: #it fetches the history of the OLHCV(open/low/high/close/value) which is useful for training the price prediction model
         data = self._get(f"coins/{coin_id}/ohlc", params={"vs_currency": "usd", "days": days})
         df = pd.DataFrame(data, columns=["timestamp_ms", "open", "high", "low", "close"])
         df["timestamp"] = pd.to_datetime(df["timestamp_ms"], unit="ms")
@@ -118,13 +100,7 @@ class CoinGeckoClient:
         return df.drop("ts", axis=1)
 
 
-class NewsIngestion:
-    """
-    Fetches cryptocurrency news headlines for sentiment analysis.
-
-    Live source: CryptoPanic free tier (no key needed for basic headlines)
-    Fallback: curated realistic mock headlines (ensures pipeline always runs)
-    """
+class NewsIngestion: #this fetched the newsheadlines for sentiment analysis for that cryptopanic(free tier) is being used also created mock headlines incase of a fallback in the model 
 
     CRYPTOPANIC_BASE = "https://cryptopanic.com/api/v1/posts/"
 
@@ -171,10 +147,7 @@ class NewsIngestion:
             logger.warning("RSS fetch failed : %s", e)
             return[]
     def get_mock_news(self, coin_name: str) -> list[dict]:
-        """
-        Curated realistic news headlines covering bullish, bearish, and neutral signals.
-        These are used for development and demonstration of the NLP pipeline.
-        """
+      #realistic headlines incase of the fall back to maintain the pipeline flow
         templates = [
             {
                 "title": f"{coin_name} sees massive institutional accumulation as ETF inflows hit record highs",

@@ -1,11 +1,6 @@
-"""
-Streamlit Dashboard — CryptoCurrency Sentiment Analyser
-========================================================
-Interactive web UI that runs the full NLP pipeline in real-time.
 
-Run:
-    streamlit run dashboard.py
-"""
+#Streamlit Dashboard , runs the complete pipeline
+
 import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
@@ -19,7 +14,7 @@ from datetime import datetime
 from data.ingestion import CoinGeckoClient, NewsIngestion, TRACKED_COINS
 from models.sentiment_model import CryptoSentimentAnalyser
 
-# ── Page config ────────────────────────────────────────────────────────────────
+#Page config
 st.set_page_config(
     page_title="Crypto Sentiment Analyser",
     layout="wide",
@@ -41,7 +36,7 @@ SIGNAL_COLORS = {
      "Bullish": "#22c55e","Neutral": "#facc15", "Bearish": "#ff3366"
 }
 
-# ── Sidebar ────────────────────────────────────────────────────────────────────
+# Sidebar 
 with st.sidebar:
     st.title("Configurations")
     use_finbert = st.toggle("Advanced Model", value=False,
@@ -53,7 +48,7 @@ with st.sidebar:
     )
     refresh = st.button("Refresh Data", use_container_width=True)
 
-# ── Load data ──────────────────────────────────────────────────────────────────
+#  Load data 
 @st.cache_resource
 def load_analyser(use_finbert):
     return CryptoSentimentAnalyser(use_finbert=use_finbert)
@@ -76,7 +71,7 @@ def get_coin_data(coin, analyser, news_client):
     ))     
     return {"coin": coin, "news": news, "results": results, "sentiment": sentiment, "sources": source_count}
 
-# ── Main UI ────────────────────────────────────────────────────────────────────
+# Main UI 
 st.title("Crypto Market Sentiment Intelligence")
 st.markdown("""Real-time sentiment monitoring and market intelligence for major cryptocurrencies using NLP models and live market data.""")
 from datetime import datetime
@@ -99,7 +94,7 @@ prices_df   = load_prices([c["id"] for c in target])
 with st.spinner("Running NLP sentiment pipeline..."):
     coin_data = [get_coin_data(c, analyser, news_client) for c in target]
 
-# ── Summary metrics row ────────────────────────────────────────────────────────
+# Summary metrics row 
 st.subheader("Market Overview")
 cols = st.columns(len(coin_data))
 for col, cd in zip(cols, coin_data):
@@ -127,7 +122,7 @@ for col, cd in zip(cols, coin_data):
             f"{cd['sources']} sources"
         )
 
-# ── Horizontal sentiment bar chart ────────────────────────────────────────────
+# Horizontal sentiment bar chart 
 st.markdown("---")
 st.subheader("Sentiment Comparison")
 
@@ -162,7 +157,7 @@ fig.update_layout(
 fig.add_vline(x=0, line_color="#64748b", line_width=1)
 st.plotly_chart(fig, use_container_width=True)
 
-# ── Per-coin deep dive ─────────────────────────────────────────────────────────
+# Per-coin deep dive 
 st.markdown("---")
 avg_score = sum(cd["sentiment"]["score"] for cd in coin_data)/len(coin_data)
 total_articles = sum(cd["sentiment"]["n_articles"] for cd in coin_data)
@@ -229,7 +224,7 @@ for tab, cd in zip(tabs, coin_data):
                     unsafe_allow_html=True,
                 )
 
-# ── Text input for live analysis ───────────────────────────────────────────────
+# Text input for live analysis 
 st.markdown("---")
 st.subheader("Live Sentiment Analysis ")
 user_text = st.text_area(

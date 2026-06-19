@@ -1,15 +1,12 @@
-"""
-Visualisation Module
-====================
-Generates charts for:
-  - Sentiment distribution per coin
-  - Sentiment vs. price correlation
-  - Sentiment over time (trend analysis)
-  - Signal dashboard summary
 
-Uses matplotlib + seaborn. All charts save to /outputs/ and can
-be embedded in reports or a Streamlit dashboard.
-"""
+##Visualisation Module , Generates charts for:
+#1.Sentiment distribution per coin
+#2. Sentiment vs. price correlation
+#3. Sentiment over time (trend analysis)
+#4. Signal dashboard summary
+
+#Uses matplotlib + seaborn. All charts save to /outputs/ and can be embedded in reports or a Streamlit dashboard.
+
 
 import os
 import logging
@@ -24,7 +21,7 @@ import seaborn as sns
 logger = logging.getLogger(__name__)
 os.makedirs("outputs", exist_ok=True)
 
-# ── Colour palette ─────────────────────────────────────────────────────────────
+#Colour palette
 COLORS = {
     "Positive": "#22c55e",
     "Negative": "#ef4444",
@@ -37,11 +34,9 @@ COLORS = {
 }
 
 SIGNAL_COLORS = {
-    "Strong Buy":  "#00ff88",
-    "Buy":         "#22c55e",
-    "Hold":        "#facc15",
-    "Sell":        "#f87171",
-    "Strong Sell": "#ff3366",
+    "Bullish":      "#22c55e",
+    "Neutral":      "#facc15",
+    "Bearish":      "#ff3366",
 }
 
 def _dark_fig(figsize=(12, 6)):
@@ -57,11 +52,7 @@ def _dark_fig(figsize=(12, 6)):
     return fig, ax
 
 
-def plot_sentiment_dashboard(coin_summaries: list[dict], save_path: str = "outputs/sentiment_dashboard.png"):
-    """
-    Bar chart showing the sentiment score and signal for each tracked coin.
-    This is the primary summary chart — what a stakeholder would see first.
-    """
+def plot_sentiment_dashboard(coin_summaries: list[dict], save_path: str = "outputs/sentiment_dashboard.png"): #Bar chart showing the sentiment score and signal for each tracked coin
     coins   = [c["name"] for c in coin_summaries]
     scores  = [c["sentiment"]["score"] for c in coin_summaries]
     signals = [c["sentiment"]["signal"] for c in coin_summaries]
@@ -102,10 +93,10 @@ def plot_sentiment_vs_price(
     timestamps: list[str],
     save_path: str = None,
 ):
-    """
-    Dual-axis chart overlaying price movement with sentiment score over time.
-    This is the core analytical output — shows if sentiment leads/lags price.
-    """
+   
+    #Dual-axis chart overlaying price movement with sentiment score over time.
+    #This is the core analytical output that shows if sentiment leads/lags price.
+    
     save_path = save_path or f"outputs/{coin_name.lower()}_sentiment_vs_price.png"
     fig, ax1 = plt.subplots(figsize=(14, 6), facecolor=COLORS["bg"])
     ax1.set_facecolor(COLORS["surface"])
@@ -154,7 +145,7 @@ def plot_sentiment_vs_price(
 
 
 def plot_label_distribution(coin_name: str, results: list, save_path: str = None):
-    """Pie chart of Positive / Negative / Neutral distribution for a coin's news."""
+    #Pie chart of Positive / Negative / Neutral distribution for a coin's news.
     save_path = save_path or f"outputs/{coin_name.lower()}_label_dist.png"
     labels_list = [r.label for r in results]
     counts = {l: labels_list.count(l) for l in ["Positive", "Neutral", "Negative"]}

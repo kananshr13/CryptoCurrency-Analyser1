@@ -1,15 +1,5 @@
-"""
-Model Evaluation Module
-=======================
-Evaluates sentiment model accuracy using labeled ground-truth data.
-Computes precision, recall, F1-score, and confusion matrix.
-
-This is the kind of evaluation framework the JD explicitly asks for:
-"Implement appropriate evaluation metrics and testing frameworks to ensure
-the accuracy, fairness, and reliability of GenAI/NLP models."
-"""
-
-import logging
+#created for evaluation of the sentiments from news headlines fetched from the web
+import logging  
 from dataclasses import dataclass
 
 import numpy as np
@@ -60,20 +50,7 @@ def evaluate_model(
     analyser,
     labeled_data: list[dict],
     model_name: str = "CryptoSentimentAnalyser",
-) -> EvaluationReport:
-    """
-    Evaluate the sentiment analyser on labeled examples.
-
-    Parameters
-    ----------
-    analyser   : CryptoSentimentAnalyser instance
-    labeled_data : list of {"text": str, "label": "Positive"|"Negative"|"Neutral"}
-    model_name : display name for the report
-
-    Returns
-    -------
-    EvaluationReport with full metrics
-    """
+) -> EvaluationReport: #evaluates the sentiment on the labelled examples where labelled data is the list of strings which are marked as positive, negative or neutral
     y_true, y_pred = [], []
 
     for item in labeled_data:
@@ -96,11 +73,8 @@ def evaluate_model(
     )
 
 
-def build_labeled_dataset() -> list[dict]:
-    """
-    Ground-truth labeled dataset for evaluation.
-    In production this would be loaded from a CSV annotated by domain experts.
-    """
+def build_labeled_dataset() -> list[dict]: #ground truth labelled dataset for the evaluation 
+
     return [
         # Positive
         {"text": "Bitcoin ETF approval drives massive institutional adoption and record inflows", "label": "Positive"},
@@ -130,11 +104,7 @@ def build_labeled_dataset() -> list[dict]:
     ]
 
 
-def compare_vader_vs_ensemble(analyser, labeled_data: list[dict]):
-    """
-    Side-by-side comparison of VADER alone vs the full ensemble.
-    Demonstrates the value of adding FinBERT to the pipeline.
-    """
+def compare_vader_vs_ensemble(analyser, labeled_data: list[dict]): #compares the VADER model alone with the full ensemble model and also demonstrates the value of adding FinBERT to the pipleine
     print("\n📊 VADER vs Ensemble Comparison")
     print(f"{'Text':<55} {'True':<10} {'VADER':<10} {'Ensemble':<12} {'Match?'}")
     print("-" * 105)
